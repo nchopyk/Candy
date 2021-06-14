@@ -1,0 +1,24 @@
+{
+  "name": "candy-api",
+  "version": "1.0.0",
+  "description": "Api for candy social network",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naz-olegovich/Candy.git"
+  },
+  "keywords": [
+    "node-react",
+    "social",
+    "network"
+  ],
+  "author": "Nazar&Dimon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/naz-olegovich/Candy/issues"
+  },
+  "homepage": "https://github.com/naz-olegovich/Candy#readme"
+}
