@@ -7,17 +7,25 @@ const UserDto = require('../dtos/user-dto');
 const ApiError = require('../exceptions/api-error');
 
 class UserService {
-    async registration(email, password) {
-        const candidate = await UserModel.findOne({ email });
+    async registration(username, email, password) {
+
+        const candidate = await UserModel.findOne({
+            $or: [
+                { username },
+                { email }
+            ]
+        });
         if (candidate) {
-            throw ApiError.BasRequest(`Пользователь с почтовым адресом ${email} уже существует`);
+            throw ApiError.BasRequest(`Пользователь с ${
+                candidate.username === username ? `именем ${username}` : `почтовым адресом ${email}`
+            } уже существует`);
         }
 
         const hashPassword = await bcrypt.hash(password, 5);
         const activationLink = uuid.v4();
 
-        const user = await UserModel.create({ email, password: hashPassword, activationLink });
-        await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
+        const user = await UserModel.create({ username, email, password: hashPassword, activationLink });
+        await mailService.sendActivationMail(email, `${process.env.API_URL}/api/auth/activate/${activationLink}`);
 
         const userDto = new UserDto(user); //id, email, isActivated
         const tokens = tokenService.generateTokens({ ...userDto });
@@ -29,7 +37,7 @@ class UserService {
     async activate(activationLink) {
         const user = await UserModel.findOne({ activationLink });
         if (!user) {
-            throw ApiError.BasRequest('Некорекиная ссылка активации');
+            throw ApiError.BasRequest('Некоректная ссылка активации');
         }
         user.isActivated = true;
         await user.save();

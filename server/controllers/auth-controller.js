@@ -9,8 +9,8 @@ class AuthController {
             if (!errors.isEmpty()) {
                 return next(ApiError.BasRequest('Ошибка при валидации', errors.array()));
             }
-            const { email, password } = req.body;
-            const userData = await userService.registration(email, password);
+            const { username, email, password } = req.body;
+            const userData = await userService.registration(username, email, password);
             res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true }); //expires in 30 days
             return res.json(userData);
         } catch (e) {
@@ -34,9 +34,10 @@ class AuthController {
             const { refreshToken } = req.cookies;
             const token = await userService.logout(refreshToken);
             res.clearCookie('refreshToken');
-            return res.status(200);
+            return res.status(200).json({ message: 'Successful logged out' });
         } catch (e) {
             next(e);
+
         }
     }
 
