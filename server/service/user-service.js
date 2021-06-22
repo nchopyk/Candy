@@ -43,10 +43,15 @@ class UserService {
         await user.save();
     }
 
-    async login(email, password) {
-        const user = await UserModel.findOne({ email });
+    async login(username, email, password) {
+        const user = await UserModel.findOne({
+            $or: [
+                { username },
+                { email }
+            ]
+        });
         if (!user) {
-            throw ApiError.BasRequest('Пользователь с таким email не найден');
+            throw ApiError.BasRequest(`Пользователь с таким ${username ? 'username' : 'email'} не найден`);
         }
 
         const isPassEquals = await bcrypt.compare(password, user.password);

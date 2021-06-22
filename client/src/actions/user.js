@@ -21,8 +21,8 @@ export const registration = (formData) => async (dispatch) => {
 export const login = (formData) => async (dispatch) => {
     try {
         dispatch(showLoader());
-        const { email, password } = formData;
-        const response = await AuthService.login(email, password);
+        const { login, password } = formData;
+        const response = await AuthService.login(login, password);
         dispatch(setUserAction(response.data.user));
         localStorage.setItem('token', response.data.accessToken);
     } catch (e) {
